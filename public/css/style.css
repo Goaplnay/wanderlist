@@ -1,0 +1,189 @@
+/* =========================
+   GLOBAL RESET
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+  height: 5rem;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+}
+
+.fa-compass {
+  color: #ff6f61;
+  font-size: 2rem;
+}
+
+.nav-link {
+  color: #222222 !important;
+  margin-right: 15px;
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+.container {
+  padding: 30px 40px;
+}
+
+/* =========================
+   FOOTER (FIXED & CENTERED)
+========================= */
+footer {
+  width: 100%;
+  background-color: #ebebeb;
+  margin-top: auto;
+  padding: 24px 0;
+}
+
+.f-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+/* SOCIAL ICONS */
+.f-info-socials {
+  display: flex;
+  gap: 18px;
+}
+
+.f-info-socials i {
+  font-size: 22px;
+  color: #222;
+  cursor: pointer;
+}
+
+.f-info-socials i:hover {
+  color: #ff6f61;
+}
+
+/* COPYRIGHT */
+.f-info-copy {
+  font-size: 14px;
+  color: #333;
+}
+
+/* LINKS */
+.f-info-link {
+  display: flex;
+  text-decoration: none;
+  gap: 20px;
+}
+
+/* .f-info-link a {
+  text-decoration: none;
+  color: #222;
+  font-size: 14px;
+}
+
+.f-info-link a:hover {
+  text-decoration: underline;
+} */
+
+/* Footer links – simple & clean */
+.f-info-links a {
+  color: #222;          /* black / dark */
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Hover effect (subtle) */
+.f-info-links a:hover {
+  text-decoration: underline;
+  color: #000;
+}
+
+/* =========================
+   CARDS / LISTINGS
+========================= */
+.listing-card {
+  border: none !important;
+  margin-bottom: 2rem;
+}
+
+.card-img-top {
+  border-radius: 1rem !important;
+  width: 100% !important;
+  height: 200px;
+  object-fit: cover !important;
+}
+
+.card-body {
+  padding: 0 !important;
+}
+
+.card-text {
+  font-weight: bold !important;
+}
+
+/* Hover overlay effect */
+.card-img-overlay {
+  opacity: 0;
+}
+
+.card-img-overlay:hover {
+  background-color: white !important;
+  opacity: 0.2;
+  transition: 0.3s ease-in-out;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .navbar {
+    padding: 0 20px;
+  }
+}
+
+
+.add-btn{
+  background-color: #fe424d;
+  border: none !important;
+
+}
+/* Edit Page */
+.edit-btn{
+  background-color: #fe424d;
+  border: none !important;
+
+}
+
+/* Show Image */
+.show-img{
+  height: 30vh;
+  object-fit: cover;
+}
+.btns{
+  display: flex;
+  gap: 10px;
+}
+.show-card{
+  padding-left: 0;
+  padding-right: 0;
+}

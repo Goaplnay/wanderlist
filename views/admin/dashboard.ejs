@@ -1,0 +1,114 @@
+<% layout('/layouts/boilerplate') %>
+
+<div class="container mt-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">📊 Admin Dashboard</h2>
+      <p class="text-muted mb-0">WanderList ka poora control yahan hai</p>
+    </div>
+    <span class="badge px-3 py-2 text-white"
+      style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50px; font-size: 0.9rem;">
+      👑 Admin
+    </span>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm text-center p-4" style="border-radius: 16px;">
+        <div style="font-size: 2.5rem;">🏠</div>
+        <h2 class="fw-bold mb-0" style="color: #667eea;"><%= totalListings %></h2>
+        <p class="text-muted mb-0">Total Listings</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm text-center p-4" style="border-radius: 16px;">
+        <div style="font-size: 2.5rem;">👥</div>
+        <h2 class="fw-bold mb-0" style="color: #764ba2;"><%= totalUsers %></h2>
+        <p class="text-muted mb-0">Total Users</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm text-center p-4" style="border-radius: 16px;">
+        <div style="font-size: 2.5rem;">⭐</div>
+        <h2 class="fw-bold mb-0" style="color: #f5a623;"><%= totalReviews %></h2>
+        <p class="text-muted mb-0">Total Reviews</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Recent Listings -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+        <div class="card-header border-0 fw-bold pt-3 pb-0 bg-white" style="border-radius: 16px;">
+          🏠 Recent Listings
+        </div>
+        <div class="card-body">
+          <% if(recentListings.length === 0) { %>
+            <p class="text-muted text-center">Koi listing nahi hai</p>
+          <% } %>
+          <% for(let listing of recentListings) { %>
+          <div class="d-flex align-items-center gap-3 mb-3 p-2 rounded-3" style="background: #f8f9fa;">
+            <img src="<%= listing.image.url %>"
+              style="width: 50px; height: 50px; object-fit: cover; border-radius: 10px;">
+            <div class="flex-grow-1">
+              <p class="fw-bold mb-0" style="font-size: 0.9rem;"><%= listing.title %></p>
+              <p class="text-muted mb-0" style="font-size: 0.8rem;">
+                by <%= listing.owner?.username %> • ₹<%= listing.price.toLocaleString("en-IN") %>/night
+              </p>
+            </div>
+            <form method="POST" action="/admin/listings/<%= listing._id %>?_method=DELETE">
+              <button class="btn btn-sm btn-outline-danger rounded-pill">🗑️</button>
+            </form>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Users -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+        <div class="card-header border-0 fw-bold pt-3 pb-0 bg-white" style="border-radius: 16px;">
+          👥 All Users
+        </div>
+        <div class="card-body">
+          <% for(let user of allUsers) { %>
+          <div class="d-flex align-items-center gap-3 mb-3 p-2 rounded-3" style="background: #f8f9fa;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+              style="width: 40px; height: 40px; min-width: 40px; background: linear-gradient(135deg, #667eea, #764ba2); font-size: 0.9rem;">
+              <%= user.username[0].toUpperCase() %>
+            </div>
+            <div class="flex-grow-1">
+              <p class="fw-bold mb-0" style="font-size: 0.9rem;">
+                <%= user.username %>
+                <% if(user.isAdmin) { %>
+                  <span class="badge ms-1" style="background: #764ba2; font-size: 0.7rem;">Admin</span>
+                <% } %>
+              </p>
+              <p class="text-muted mb-0" style="font-size: 0.8rem;"><%= user.email %></p>
+            </div>
+            <div class="d-flex gap-1">
+              <form method="POST" action="/admin/users/<%= user._id %>/toggle-admin">
+                <button class="btn btn-sm btn-outline-secondary rounded-pill" style="font-size: 0.75rem;">
+                  <%= user.isAdmin ? '👑 Remove' : '👑 Make Admin' %>
+                </button>
+              </form>
+              <% if(!user._id.equals(currentUser._id)) { %>
+              <form method="POST" action="/admin/users/<%= user._id %>?_method=DELETE">
+                <button class="btn btn-sm btn-outline-danger rounded-pill">🗑️</button>
+              </form>
+              <% } %>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

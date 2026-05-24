@@ -1,0 +1,114 @@
+<% layout('layouts/boilerplate') %>
+
+<!-- HERO SECTION -->
+<div class="hero-section text-center py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white;">
+  <h1 class="display-5 fw-bold mb-2">🌍 Discover Your Next Adventure</h1>
+  <p class="lead mb-4">Find the perfect stay — beaches, mountains, cities and more!</p>
+
+  <!-- Search Bar -->
+  <form action="/listings" method="GET" class="d-flex gap-2 justify-content-center px-4">
+    <input
+      type="text"
+      name="search"
+      class="form-control w-50 shadow"
+      placeholder="🔍 Search by title, location, country..."
+      value="<%= search %>"
+      style="border-radius: 50px; padding: 12px 20px; border: none;"
+    >
+    <button class="btn btn-light fw-bold px-4" type="submit" style="border-radius: 50px;">
+      Search
+    </button>
+    <% if(search) { %>
+      <a href="/listings" class="btn btn-outline-light px-4" style="border-radius: 50px;">Clear</a>
+    <% } %>
+  </form>
+</div>
+
+<!-- CATEGORY FILTER -->
+<div class="col-12 d-flex gap-2 flex-wrap justify-content-center mb-4">
+  <a href="/listings" class="btn btn-sm rounded-pill px-3 <%= !category ? 'btn-dark' : 'btn-outline-dark' %>">
+    🌍 All
+  </a>
+  <a href="/listings?category=Beach" class="btn btn-sm rounded-pill px-3 <%= category === 'Beach' ? 'btn-dark' : 'btn-outline-dark' %>">
+    🏖️ Beach
+  </a>
+  <a href="/listings?category=Mountain" class="btn btn-sm rounded-pill px-3 <%= category === 'Mountain' ? 'btn-dark' : 'btn-outline-dark' %>">
+    ⛰️ Mountain
+  </a>
+  <a href="/listings?category=City" class="btn btn-sm rounded-pill px-3 <%= category === 'City' ? 'btn-dark' : 'btn-outline-dark' %>">
+    🏙️ City
+  </a>
+  <a href="/listings?category=Countryside" class="btn btn-sm rounded-pill px-3 <%= category === 'Countryside' ? 'btn-dark' : 'btn-outline-dark' %>">
+    🌄 Countryside
+  </a>
+  <a href="/listings?category=Desert" class="btn btn-sm rounded-pill px-3 <%= category === 'Desert' ? 'btn-dark' : 'btn-outline-dark' %>">
+    🏜️ Desert
+  </a>
+  <a href="/listings?category=Forest" class="btn btn-sm rounded-pill px-3 <%= category === 'Forest' ? 'btn-dark' : 'btn-outline-dark' %>">
+    🌲 Forest
+  </a>
+  <a href="/listings?category=Lake" class="btn btn-sm rounded-pill px-3 <%= category === 'Lake' ? 'btn-dark' : 'btn-outline-dark' %>">
+    🏞️ Lake
+  </a>
+  <a href="/listings?category=Island" class="btn btn-sm rounded-pill px-3 <%= category === 'Island' ? 'btn-dark' : 'btn-outline-dark' %>">
+    🏝️ Island
+  </a>
+</div>
+
+<!-- RESULT INFO -->
+<% if(search || category) { %>
+  <p class="text-muted text-center mb-3">
+    <b><%= allListings.length %></b> listing<%= allListings.length !== 1 ? 's' : '' %> mili
+    <% if(search) { %> "<%= search %>" ke liye <% } %>
+    <% if(category) { %> — Category: <b><%= category %></b> <% } %>
+  </p>
+<% } %>
+
+<!-- LISTINGS GRID -->
+<div class="row g-4">
+  <% if (allListings.length === 0) { %>
+    <div class="col-12 text-center mt-5">
+      <div style="font-size: 4rem;">😕</div>
+      <h5 class="text-muted mt-2">Koi listing nahi mili!</h5>
+      <a href="/listings" class="btn btn-dark mt-3 rounded-pill px-4">Saari Listings Dekho</a>
+    </div>
+  <% } %>
+
+  <% for (let listing of allListings) { %>
+    <div class="col-xl-3 col-md-4 col-sm-6">
+      <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+        <div class="card h-100 border-0 shadow-sm listing-card"
+          style="border-radius: 16px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;"
+          onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'"
+        >
+          <div style="position: relative;">
+            <img
+              src="<%= listing.image.url %>"
+              class="card-img-top"
+              style="height:220px; object-fit:cover;"
+              alt="listing image"
+            >
+            <% if(listing.category) { %>
+              <span class="badge position-absolute top-0 end-0 m-2 px-3 py-2"
+                style="background: rgba(0,0,0,0.6); border-radius: 50px; font-size: 0.75rem;">
+                <%= listing.category %>
+              </span>
+            <% } %>
+          </div>
+
+          <div class="card-body p-3">
+            <h6 class="card-title fw-bold mb-1" style="font-size: 1rem;"><%= listing.title %></h6>
+            <p class="text-muted mb-1" style="font-size: 0.85rem;">
+              📍 <%= listing.location %>, <%= listing.country %>
+            </p>
+            <p class="fw-bold mb-0 mt-2" style="font-size: 0.95rem;">
+              ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %>
+              <span class="text-muted fw-normal">/night</span>
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  <% } %>
+</div>

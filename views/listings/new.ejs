@@ -1,0 +1,129 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="row">
+  <div class="col-8 mx-auto">
+
+    <h3 class="mb-4">Create New Listing</h3>
+
+    <form action="/listings"
+      method="POST"
+      class="needs-validation"
+      enctype="multipart/form-data"
+      novalidate>
+
+      <!-- IMAGE UPLOAD -->
+     <!-- IMAGE UPLOAD -->
+<div class="mb-3">
+  <label class="form-label">Listing Images (max 5)</label>
+  <input
+    type="file"
+    name="listing[images]"
+    class="form-control"
+    accept="image/*"
+    multiple
+    required>
+  <div class="form-text text-muted">Ek ya zyada images select karo (max 5)</div>
+  <div class="invalid-feedback">Image is required</div>
+</div>
+
+      <!-- TITLE -->
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input type="text" name="listing[title]" id="titleInput" class="form-control" required>
+        <div class="invalid-feedback">Title is required</div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea name="listing[description]" id="descInput" class="form-control" required></textarea>
+        <div class="invalid-feedback">Description is required</div>
+      </div>
+
+      <!-- PRICE + COUNTRY -->
+      <div class="row">
+        <div class="mb-3 col-md-4">
+          <label class="form-label">Price</label>
+          <input type="number" name="listing[price]" id="priceInput" class="form-control" required>
+          <div class="invalid-feedback">Price is required</div>
+          <!-- AI Button -->
+          <button type="button" class="btn btn-outline-success btn-sm mt-2" id="suggestPriceBtn">
+            🤖 AI Se Price Suggest Karo
+          </button>
+        </div>
+
+        <div class="mb-3 col-md-8">
+          <label class="form-label">Country</label>
+          <input type="text" name="listing[country]" id="countryInput" class="form-control" required>
+          <div class="invalid-feedback">Country is required</div>
+        </div>
+      </div>
+
+      <!-- AI Price Result -->
+      <div id="priceResult" class="alert alert-success mt-2" style="display:none;"></div>
+
+      <!-- LOCATION -->
+      <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input type="text" name="listing[location]" id="locationInput" class="form-control" required>
+        <div class="invalid-feedback">Location is required</div>
+      </div>
+
+      <!-- CATEGORY -->
+<div class="mb-3">
+  <label class="form-label">Category</label>
+  <select name="listing[category]" class="form-control">
+    <option value="Beach">🏖️ Beach</option>
+    <option value="Mountain">⛰️ Mountain</option>
+    <option value="City">🏙️ City</option>
+    <option value="Countryside">🌄 Countryside</option>
+    <option value="Desert">🏜️ Desert</option>
+    <option value="Forest">🌲 Forest</option>
+    <option value="Lake">🏞️ Lake</option>
+    <option value="Island">🏝️ Island</option>
+  </select>
+</div>
+
+      <button type="submit" class="btn btn-dark mt-3">Create Listing</button>
+
+    </form>
+
+    <script>
+      document.getElementById("suggestPriceBtn").addEventListener("click", async () => {
+        const location = document.getElementById("locationInput").value;
+        const country = document.getElementById("countryInput").value;
+        const description = document.getElementById("descInput").value;
+
+        if (!location || !country) {
+          alert("Pehle Location aur Country bharo!");
+          return;
+        }
+
+        const btn = document.getElementById("suggestPriceBtn");
+        btn.disabled = true;
+        btn.textContent = "🤖 Soch raha hun...";
+
+        try {
+          const res = await fetch("/chatbot/price-suggest", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ location, country, description }),
+          });
+
+          const data = await res.json();
+
+          const resultDiv = document.getElementById("priceResult");
+          resultDiv.style.display = "block";
+          resultDiv.innerHTML = `<b>AI Suggestion:</b><br>${data.reply}`;
+
+        } catch (err) {
+          alert("Error aa gaya! Dobara try karo.");
+        }
+
+        btn.disabled = false;
+        btn.textContent = "🤖 AI Se Price Suggest Karo";
+      });
+    </script>
+
+  </div>
+</div>

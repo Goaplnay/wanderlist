@@ -1,0 +1,85 @@
+<nav class="navbar navbar-expand-lg border-bottom sticky-top" style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+  <div class="container-fluid px-4">
+
+    <!-- LOGO -->
+    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="/"
+      style="font-size: 1.3rem; color: #764ba2;">
+      <i class="fa-regular fa-compass" style="color: #667eea;"></i>
+      WanderList
+    </a>
+
+    <!-- TOGGLER -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+      <!-- LEFT SIDE -->
+      <div class="navbar-nav me-auto gap-1">
+        <a class="nav-link px-3 py-2 rounded-pill fw-500" href="/listings"
+          style="transition: all 0.2s;"
+          onmouseover="this.style.background='#f0f0ff'; this.style.color='#764ba2'"
+          onmouseout="this.style.background='transparent'; this.style.color=''">
+          🏠 All Listings
+        </a>
+        <a class="nav-link px-3 py-2 rounded-pill" href="/listings/new"
+          style="transition: all 0.2s;"
+          onmouseover="this.style.background='#f0f0ff'; this.style.color='#764ba2'"
+          onmouseout="this.style.background='transparent'; this.style.color=''">
+          ➕ Add Listing
+        </a>
+        
+        <a class="nav-link px-3 py-2 rounded-pill" href="/chatbot"
+          style="transition: all 0.2s;"
+          onmouseover="this.style.background='#f0f0ff'; this.style.color='#764ba2'"
+          onmouseout="this.style.background='transparent'; this.style.color=''">
+          🤖 Travel Assistant
+        </a>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="navbar-nav d-flex align-items-center gap-2">
+  <% if (!currentUser) { %>
+  <a class="nav-link px-3 py-2 rounded-pill" href="/signup"
+    style="transition: all 0.2s;"
+    onmouseover="this.style.background='#f0f0ff'; this.style.color='#764ba2'"
+    onmouseout="this.style.background='transparent'; this.style.color=''">
+    ✨ Sign Up
+  </a>
+  <a class="btn btn-sm fw-bold text-white px-4 py-2" href="/login"
+    style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50px; border: none;">
+    🔐 Log In
+  </a>
+<% } else { %>
+  <% if(currentUser.isAdmin) { %>
+    <a class="nav-link px-3 py-2 rounded-pill fw-bold" href="/admin"
+      style="color: #764ba2; transition: all 0.2s;"
+      onmouseover="this.style.background='#f0f0ff'"
+      onmouseout="this.style.background='transparent'">
+      👑 Admin
+    </a>
+  <% } %>
+  <a href="/profile" class="nav-link px-3 py-2 rounded-pill"
+    style="transition: all 0.2s;"
+    onmouseover="this.style.background='#f0f0ff'; this.style.color='#764ba2'"
+    onmouseout="this.style.background='transparent'; this.style.color=''">
+    👤 <b><%= currentUser.username %></b>
+  </a>
+  <a class="btn btn-sm btn-outline-danger fw-bold px-4 py-2" href="/logout"
+    style="border-radius: 50px;">
+    Logout
+  </a>
+  <a class="nav-link px-3 py-2 rounded-pill" href="/bookings/my"
+  style="transition: all 0.2s;"
+  onmouseover="this.style.background='#f0f0ff'; this.style.color='#764ba2'"
+  onmouseout="this.style.background='transparent'; this.style.color=''">
+  🔔 My Bookings
+</a>
+<% } %>
+      </div>
+
+    </div>
+  </div>
+</nav>

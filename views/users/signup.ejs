@@ -1,0 +1,105 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+
+      <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+
+        <!-- Card Header -->
+        <div class="text-center py-4"
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <div style="font-size: 2.5rem;">🌍</div>
+          <h3 class="text-white fw-bold mb-0">Join WanderList!</h3>
+          <p class="text-white-50 mb-0">Apna account banao aur explore karo</p>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-4">
+          <form action="/signup" method="POST" class="needs-validation" novalidate>
+
+            <!-- Username -->
+            <div class="mb-3">
+              <label for="username" class="form-label fw-bold text-muted" style="font-size: 0.85rem;">USERNAME</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fa-solid fa-user text-muted"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control border-start-0 bg-light"
+                  id="username"
+                  name="username"
+                  placeholder="Apna username choose karo"
+                  required
+                  style="border-radius: 0 10px 10px 0;"
+                >
+                <div class="invalid-feedback">Username required hai!</div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold text-muted" style="font-size: 0.85rem;">EMAIL</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fa-solid fa-envelope text-muted"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control border-start-0 bg-light"
+                  id="email"
+                  name="email"
+                  placeholder="Apna email daalo"
+                  required
+                  style="border-radius: 0 10px 10px 0;"
+                >
+                <div class="invalid-feedback">Valid email required hai!</div>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label for="password" class="form-label fw-bold text-muted" style="font-size: 0.85rem;">PASSWORD</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fa-solid fa-lock text-muted"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control border-start-0 bg-light"
+                  id="password"
+                  name="password"
+                  placeholder="Strong password banao"
+                  required
+                  style="border-radius: 0 10px 10px 0;"
+                >
+                <div class="invalid-feedback">Password required hai!</div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn w-100 fw-bold py-2 text-white"
+              style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50px; border: none;">
+              Create Account ✨
+            </button>
+
+          </form>
+
+          <!-- Divider -->
+          <div class="text-center my-3">
+            <span class="text-muted" style="font-size: 0.85rem;">Already account hai?</span>
+          </div>
+
+          <!-- Login Link -->
+          <a href="/login" class="btn w-100 btn-outline-secondary fw-bold py-2"
+            style="border-radius: 50px;">
+            🔐 Login Karo
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

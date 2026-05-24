@@ -1,0 +1,202 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">🤖 WanderList Travel Assistant</h2>
+        <p class="text-muted">Kisi bhi destination ke baare mein poochho — main help karunga!</p>
+      </div>
+
+      <!-- Chat Card -->
+      <div class="card border-0 shadow" style="border-radius: 20px; overflow: hidden;">
+
+        <!-- Chat Header -->
+        <div class="card-header d-flex align-items-center gap-3 py-3"
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+          <div class="rounded-circle bg-white d-flex align-items-center justify-content-center"
+            style="width: 45px; height: 45px; min-width: 45px;">
+            <span style="font-size: 1.3rem;">🤖</span>
+          </div>
+          <div>
+            <h6 class="mb-0 text-white fw-bold">Travel Assistant</h6>
+            <small class="text-white-50">● Online</small>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chatBox"
+          style="height: 480px; overflow-y: auto; background: #f8f9fa; padding: 20px;">
+
+          <!-- Welcome Message -->
+          <div class="d-flex gap-2 mb-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+              style="width: 38px; height: 38px; background: linear-gradient(135deg, #667eea, #764ba2);">
+              <span>🤖</span>
+            </div>
+            <div>
+              <div class="bg-white rounded-4 p-3 shadow-sm" style="max-width: 400px;">
+                <p class="mb-1">Namaste! 👋 Main WanderList ka Travel Assistant hun!</p>
+                <p class="mb-0">Mujhse poochho:</p>
+                <ul class="mb-0 mt-1" style="font-size: 0.9rem;">
+                  <li>🏖️ Best beaches in India</li>
+                  <li>⛰️ Hill stations near Delhi</li>
+                  <li>✈️ Budget travel tips</li>
+                  <li>🍜 Local food recommendations</li>
+                </ul>
+              </div>
+              <small class="text-muted ms-2">Travel Assistant</small>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Quick Suggestions -->
+        <div class="px-3 pt-3 pb-1" style="background: #f8f9fa;">
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-sm btn-outline-secondary rounded-pill suggestion-btn">🏖️ Best beaches in Goa</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill suggestion-btn">⛰️ Hill stations near Mumbai</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill suggestion-btn">💰 Budget travel tips</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill suggestion-btn">🍜 Street food in Delhi</button>
+          </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="card-footer bg-white border-0 p-3">
+          <div class="input-group" style="border: 2px solid #667eea; border-radius: 50px; overflow: hidden; padding: 4px;">
+            <input
+              type="text"
+              id="userInput"
+              class="form-control border-0 shadow-none ps-3"
+              placeholder="Koi bhi travel question poochho..."
+              autocomplete="off"
+              style="background: transparent;"
+            >
+            <button class="btn px-4 me-1" id="sendBtn"
+              style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 50px;">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatBox = document.getElementById("chatBox");
+  const userInput = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  function addMessage(text, isUser) {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("d-flex", "gap-2", "mb-3");
+    if (isUser) wrapper.classList.add("flex-row-reverse");
+
+    const avatar = document.createElement("div");
+    avatar.classList.add("rounded-circle", "d-flex", "align-items-center", "justify-content-center", "flex-shrink-0");
+    avatar.style.cssText = "width:38px; height:38px;";
+
+    if (isUser) {
+      avatar.style.background = "#343a40";
+      avatar.innerHTML = '<i class="fa-solid fa-user text-white"></i>';
+    } else {
+      avatar.style.background = "linear-gradient(135deg, #667eea, #764ba2)";
+      avatar.innerHTML = "🤖";
+    }
+
+    const bubbleWrapper = document.createElement("div");
+
+    const bubble = document.createElement("div");
+    bubble.classList.add("rounded-4", "p-3", "shadow-sm");
+    bubble.style.maxWidth = "75%";
+    bubble.style.whiteSpace = "pre-wrap";
+    bubble.style.lineHeight = "1.5";
+
+    if (isUser) {
+      bubble.style.background = "linear-gradient(135deg, #667eea, #764ba2)";
+      bubble.style.color = "white";
+    } else {
+      bubble.style.background = "white";
+    }
+
+    bubble.innerHTML = text
+  .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+  .replace(/\n/g, "<br>");
+
+    const label = document.createElement("small");
+    label.classList.add("text-muted", "ms-2");
+    label.textContent = isUser ? "You" : "Travel Assistant";
+
+    bubbleWrapper.appendChild(bubble);
+    bubbleWrapper.appendChild(label);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubbleWrapper);
+    chatBox.appendChild(wrapper);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function addLoading() {
+    const div = document.createElement("div");
+    div.id = "loadingMsg";
+    div.classList.add("d-flex", "gap-2", "mb-3");
+    div.innerHTML = `
+      <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+        style="width:38px; height:38px; background: linear-gradient(135deg, #667eea, #764ba2);">
+        🤖
+      </div>
+      <div class="bg-white rounded-4 p-3 shadow-sm d-flex align-items-center gap-2">
+        <div class="spinner-border spinner-border-sm" style="color: #764ba2;" role="status"></div>
+        <span class="text-muted">Soch raha hun...</span>
+      </div>
+    `;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  async function sendMessage(message) {
+    const msg = message || userInput.value.trim();
+    if (!msg) return;
+
+    addMessage(msg, true);
+    userInput.value = "";
+    sendBtn.disabled = true;
+    addLoading();
+
+    try {
+      const res = await fetch("/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg }),
+      });
+
+      const data = await res.json();
+      document.getElementById("loadingMsg")?.remove();
+      addMessage(data.reply || "Koi response nahi mila.", false);
+
+    } catch (err) {
+      document.getElementById("loadingMsg")?.remove();
+      addMessage("Error aa gaya! Thodi der baad try karo. 😕", false);
+    }
+
+    sendBtn.disabled = false;
+    userInput.focus();
+  }
+
+  // Suggestion buttons
+  document.querySelectorAll(".suggestion-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      sendMessage(btn.textContent.trim());
+    });
+  });
+
+  sendBtn.addEventListener("click", () => sendMessage());
+  userInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
