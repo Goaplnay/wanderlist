@@ -23,7 +23,7 @@ const User = require("./models/user.js");
 // ROUTERS
 // ======================
 
-const listingsRouter = require("./routes/listing.js");
+const listingsRouter = require("./routes/listings.js");
 const reviewsRouter = require("./routes/review.js");
 const usersRouter = require("./routes/user.js");
 const chatbotRouter = require("./routes/chatbot.js");
