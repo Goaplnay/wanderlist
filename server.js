@@ -11,7 +11,10 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 
 const session = require("express-session");
+
+// ✅ FIXED CONNECT-MONGO
 const MongoStore = require("connect-mongo");
+
 const flash = require("connect-flash");
 
 const passport = require("passport");
@@ -71,14 +74,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // SESSION STORE
 // ======================
 
+// ✅ FINAL FIX
 const store = MongoStore.create({
   mongoUrl: dbUrl,
 
   touchAfter: 24 * 3600,
-
-  crypto: {
-    secret: process.env.SESSION_SECRET,
-  },
 });
 
 store.on("error", (err) => {
