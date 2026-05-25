@@ -5,172 +5,258 @@ const Listing = require("../models/listing");
 const wrapAsync = require("../utils/wrapAsync");
 const ExpressError = require("../utils/ExpressError");
 const { listingSchema } = require("../schema");
-const { isLoggedIn, isOwner } = require("../middleware");
-const multer = require("multer");
-const { storage } = require("../cloudConfig.js");
-const upload = multer({ storage });
 
+const { isLoggedIn, isOwner } = require("../middleware");
+
+const multer = require("multer");
+
+const { storage } = require("../cloudConfig.js");
+
+const upload = multer({ storage });
 
 // ======================
 // VALIDATION MIDDLEWARE
 // ======================
+
 const validateListing = (req, res, next) => {
   const { error } = listingSchema.validate(req.body);
+
   if (error) {
-    const errorMessage = error.details.map(el => el.message).join(", ");
+    const errorMessage = error.details
+      .map((el) => el.message)
+      .join(",");
+
     throw new ExpressError(errorMessage, 400);
   }
+
   next();
 };
 
 // ======================
-// ROUTES
+// INDEX ROUTE
 // ======================
 
-// INDEX
-router.get("/", wrapAsync(async (req, res) => {
-  const { search, category } = req.query;
-  let filter = {};
+router.get(
+  "/",
+  wrapAsync(async (req, res) => {
+    const { search, category } = req.query;
 
-  if (search) {
-    filter.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { location: { $regex: search, $options: "i" } },
-      { country: { $regex: search, $options: "i" } },
-    ];
-  }
+    let filter = {};
 
-  if (category) {
-    filter.category = category;
-  }
+    if (search) {
+      filter.$or = [
+        {
+          title: {
+            $regex: search,
+            $options: "i",
+          },
+        },
 
-  const allListings = await Listing.find(filter);
-  res.render("listings/index", { allListings, search: search || "", category: category || "" });
-}));
-// NEW
+        {
+          location: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+
+        {
+          country: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ];
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    const allListings = await Listing.find(filter);
+
+    res.render("listings/index", {
+      allListings,
+      search: search || "",
+      category: category || "",
+    });
+  })
+);
+
+// ======================
+// NEW ROUTE
+// ======================
+
 router.get("/new", isLoggedIn, (req, res) => {
-  res.render("listings/new.ejs");
+  res.render("listings/new");
 });
 
-// CREATE
-// CREATE
-router.post("/", isLoggedIn, upload.array("listing[images]", 5), validateListing, wrapAsync(async (req, res) => {
-  const newListing = new Listing(req.body.listing);
-  newListing.owner = req.user._id;
+// ======================
+// CREATE ROUTE
+// ======================
 
-  if (req.files && req.files.length > 0) {
-    // Pehli image main image banao
-    newListing.image = {
-      url: req.files[0].path,
-      filename: req.files[0].filename,
-    };
-    // Saari images array mein save karo
-    newListing.images = req.files.map(f => ({
-      url: f.path,
-      filename: f.filename,
-    }));
-  }
+router.post(
+  "/",
+  isLoggedIn,
+  upload.array("listing[images]", 5),
+  validateListing,
 
-  await newListing.save();
-  req.flash("success", "Listing created successfully!");
-  res.redirect(`/listings/${newListing._id}`);
-}));
+  wrapAsync(async (req, res) => {
+    const newListing = new Listing(req.body.listing);
 
-// UPDATE
-router.put("/:id", isLoggedIn, isOwner, upload.array("listing[images]", 5), validateListing, wrapAsync(async (req, res) => {
-  const { id } = req.params;
-  const listing = await Listing.findByIdAndUpdate(id, req.body.listing, {
-    runValidators: true,
-    new: true,
-  });
+    newListing.owner = req.user._id;
 
-  if (!listing) throw new ExpressError("Listing not found", 404);
+    if (req.files && req.files.length > 0) {
+      // Main image
+      newListing.image = {
+        url: req.files[0].path,
+        filename: req.files[0].filename,
+      };
 
-  if (req.files && req.files.length > 0) {
-    // Pehli image main image update karo
-    listing.image = {
-      url: req.files[0].path,
-      filename: req.files[0].filename,
-    };
-    // Naye images add karo existing ke saath
-    const newImages = req.files.map(f => ({
-      url: f.path,
-      filename: f.filename,
-    }));
-    listing.images.push(...newImages);
-    await listing.save();
-  }
+      // Multiple images
+      newListing.images = req.files.map((file) => ({
+        url: file.path,
+        filename: file.filename,
+      }));
+    }
 
-  req.flash("success", "Listing updated successfully!");
-  res.redirect(`/listings/${id}`);
-}));
+    await newListing.save();
 
-// SHOW
-router.get("/:id", wrapAsync(async (req, res) => {
-  const { id } = req.params;
-  const listing = await Listing.findById(id)
-    .populate({ path: "reviews", populate: { path: "author" } })
-    .populate("owner");
+    req.flash("success", "Listing created successfully!");
 
-  if (!listing) {
-    throw new ExpressError("Listing not found", 404);
-  }
+    res.redirect(`/listings/${newListing._id}`);
+  })
+);
 
-  res.render("listings/show", { listing });
-}));
+// ======================
+// SHOW ROUTE
+// ======================
 
-// EDIT
-router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(async (req, res) => {
-  const { id } = req.params;
-  const listing = await Listing.findById(id);
+router.get(
+  "/:id",
 
-  if (!listing) {
-    throw new ExpressError("Listing not found", 404);
-  }
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
 
-  res.render("listings/edit", { listing });
-}));
+    const listing = await Listing.findById(id)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "author",
+        },
+      })
+      .populate("owner");
 
-// UPDATE
-router.put("/:id", isLoggedIn, isOwner, upload.single("listing[image]"), validateListing, wrapAsync(async (req, res) => {
-  const { id } = req.params;
+    if (!listing) {
+      req.flash("error", "Listing not found!");
 
-  // ✅ Geocoding
-  const geoData = await geocoder.forwardGeocode({
-    query: req.body.listing.location,
-    limit: 1,
-  }).send();
+      return res.redirect("/listings");
+    }
 
-  const listing = await Listing.findByIdAndUpdate(id, req.body.listing, {
-    runValidators: true,
-    new: true,
-  });
+    res.render("listings/show", { listing });
+  })
+);
 
-  listing.geometry = geoData.body.features[0].geometry;
+// ======================
+// EDIT ROUTE
+// ======================
 
-  if (req.file) {
-    listing.image = {
-      url: req.file.path,
-      filename: req.file.filename,
-    };
-  }
+router.get(
+  "/:id/edit",
+  isLoggedIn,
+  isOwner,
 
-  await listing.save();
-  req.flash("success", "Listing updated successfully!");
-  res.redirect(`/listings/${id}`);
-}));
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
 
-// DELETE
-router.delete("/:id", isLoggedIn, isOwner, wrapAsync(async (req, res) => {
-  const { id } = req.params;
-  const deletedListing = await Listing.findByIdAndDelete(id);
+    const listing = await Listing.findById(id);
 
-  if (!deletedListing) {
-    throw new ExpressError("Listing not found", 404);
-  }
+    if (!listing) {
+      req.flash("error", "Listing not found!");
 
-  req.flash("success", "Listing deleted successfully!");
-  res.redirect("/listings");
-}));
+      return res.redirect("/listings");
+    }
+
+    res.render("listings/edit", { listing });
+  })
+);
+
+// ======================
+// UPDATE ROUTE
+// ======================
+
+router.put(
+  "/:id",
+  isLoggedIn,
+  isOwner,
+  upload.array("listing[images]", 5),
+  validateListing,
+
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+
+    const listing = await Listing.findByIdAndUpdate(
+      id,
+      req.body.listing,
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
+
+    if (!listing) {
+      throw new ExpressError("Listing not found", 404);
+    }
+
+    if (req.files && req.files.length > 0) {
+      // Update main image
+      listing.image = {
+        url: req.files[0].path,
+        filename: req.files[0].filename,
+      };
+
+      // Add new images
+      const newImages = req.files.map((file) => ({
+        url: file.path,
+        filename: file.filename,
+      }));
+
+      listing.images.push(...newImages);
+
+      await listing.save();
+    }
+
+    req.flash("success", "Listing updated successfully!");
+
+    res.redirect(`/listings/${id}`);
+  })
+);
+
+// ======================
+// DELETE ROUTE
+// ======================
+
+router.delete(
+  "/:id",
+  isLoggedIn,
+  isOwner,
+
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+
+    const deletedListing = await Listing.findByIdAndDelete(id);
+
+    if (!deletedListing) {
+      throw new ExpressError("Listing not found", 404);
+    }
+
+    req.flash("success", "Listing deleted successfully!");
+
+    res.redirect("/listings");
+  })
+);
+
+// ======================
+// EXPORT
+// ======================
 
 module.exports = router;
