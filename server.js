@@ -11,7 +11,6 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 
 const passport = require("passport");
@@ -68,25 +67,10 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // ======================
-// SESSION STORE
-// ======================
-
-const store = MongoStore.create({
-  mongoUrl: dbUrl,
-  touchAfter: 24 * 3600,
-});
-
-store.on("error", (err) => {
-  console.log("❌ SESSION STORE ERROR:", err);
-});
-
-// ======================
 // SESSION CONFIG
 // ======================
 
 const sessionOptions = {
-  store,
-
   secret: process.env.SESSION_SECRET || "mysupersecretcode",
 
   resave: false,
@@ -142,15 +126,15 @@ app.get("/", (req, res) => {
   res.redirect("/listings");
 });
 
-app.use("/chatbot", chatbotRouter);
-
-app.use("/admin", adminRouter);
-
-app.use("/bookings", bookingRouter);
-
 app.use("/listings", listingsRouter);
 
 app.use("/listings/:id/reviews", reviewsRouter);
+
+app.use("/bookings", bookingRouter);
+
+app.use("/chatbot", chatbotRouter);
+
+app.use("/admin", adminRouter);
 
 app.use("/", usersRouter);
 
