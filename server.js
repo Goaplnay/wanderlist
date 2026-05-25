@@ -16,7 +16,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const User = require("./models/user.js");
 
 // Routers
-const listingsRouter = require("./routes/listings.js");
+const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const usersRouter = require("./routes/user.js");
 const chatbotRouter = require("./routes/chatbot.js");
@@ -27,7 +27,7 @@ const bookingRouter = require("./routes/booking.js");
 // DATABASE
 // ======================
 mongoose
-  .connect("mongodb://127.0.0.1:27017/wanderlist")
+  .connect(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlist")
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("MongoDB connection error:", err));
 
@@ -109,6 +109,7 @@ app.use((err, req, res, next) => {
 // ======================
 // SERVER
 // ======================
-app.listen(8080, () => {
-  console.log("Server is listening on port 8080");
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });
