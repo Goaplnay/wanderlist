@@ -34,7 +34,7 @@ const bookingRouter = require("./routes/booking.js");
 // DATABASE CONNECTION
 // ======================
 
-const dbUrl = process.env.ATLASDB_URL;
+const dbUrl = process.env.MONGO_URL;
 
 mongoose
   .connect(dbUrl)
